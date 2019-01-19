@@ -13,8 +13,8 @@ var data = {};
 
 function callback(error, response, body) {
     if (!error && response.statusCode == 200) {
-        var tempData = JSON.stringify(JSON.parse(body).data);
-        data = JSON.parse(tempData.substring(1, tempData.length-1));
+        data = JSON.parse(body).data[0];
+        console.log(data.title);
     }
 }
 
