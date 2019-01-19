@@ -9,14 +9,12 @@ var options = {
     headers: headers
 };
 
-var bleh = {};
 var data = {};
 
 function callback(error, response, body) {
     if (!error && response.statusCode == 200) {
-        //console.log(body);
-        bleh = JSON.parse(body);
-        console.log(bleh["data"]);
+        var tempData = JSON.stringify(JSON.parse(body).data);
+        data = JSON.parse(tempData.substring(1, tempData.length-1));
     }
 }
 
