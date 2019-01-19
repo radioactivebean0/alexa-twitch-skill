@@ -1,7 +1,7 @@
 /* eslint-disable  func-names */
 /* eslint-disable  no-console */
 
-const Alexa = require('alexa-sdk');
+const Alexa = require('ask-sdk');
 
 const GetTwitchStreamHandler = {
   canHandle(handlerInput) {
@@ -110,9 +110,7 @@ exports.handler = skillBuilder
   .addErrorHandlers(ErrorHandler)
   .lambda();
 
-let stream_name;
-let viewers;
-let datastring;
+var data;
 function getData(name){
   if(name==null){
     
@@ -120,23 +118,25 @@ function getData(name){
   
   var request = require('request');
 
-  var headers = {
-     'Client-ID': '76cpa8o345vq4w52p2d5'
-  };
+var headers = {
+    'Client-ID': '76cpa8o345vq4w52p2s4utyzoxsfd5'
+};
 
-  var options = {
-     url: 'https://api.twitch.tv/helix/streams?user_login='+name,
-     headers: headers
-  };
-  var body;
-  function callback(error, response, body) {
+var options = {
+    url: 'https://api.twitch.tv/helix/streams?user_login='+name,
+    headers: headers
+};
+
+ data = {};
+
+function callback(error, response, body) {
     if (!error && response.statusCode == 200) {
-        console.log(body);
+        var tempData = JSON.stringify(JSON.parse(body).data);
+        data = JSON.parse(tempData.substring(1, tempData.length-1));
     }
-  }
+}
 
-  request(options, callback);
-  body = request;
+request(options, callback);
 
 }
 function getTopTen(){
@@ -144,8 +144,8 @@ function getTopTen(){
 }
 function getStreamName(){
   
-  return datastring.data.title;
+  return data.title;
 }
 function getViewers(){
-  return datastring.data.viewer_count;
+  return data.viewer_count;
 }
