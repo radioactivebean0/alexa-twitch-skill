@@ -1,3 +1,11 @@
+var axios = require('axios');
+
+const URL = 'https://api.twitch.tv/helix/games/top?first=5';
+
+axios.get(URL, { headers: { 'Client-ID': 'n6tkzhwjlttoho9gnpid51z840eiv3' } })
+    .then(data => console.log(data.data))
+    .catch(err => console.log(err));
+/*
 var request = require('request');
 
 var headers = {
@@ -21,3 +29,4 @@ function callback(error, response, body) {
 }
 
 request(options, callback);
+*/
