@@ -6,10 +6,17 @@ function getTopStreams(num = 5) {
         .catch(err => console.log(err));
 }
 
-function getTopGameStreams(gameID, num = 5) {
-    const topGameStreamsURL = 'https://api.twitch.tv/helix/streams?first=' + num + '&game_id=' + gameID;
-    axios.get(topGameStreamsURL, { headers: { 'Client-ID': 'n6tkzhwjlttoho9gnpid51z840eiv3' } })
-        .then(res => console.log(res.data))
+function getTopGameStreams(gameName, num = 5) {
+    const gameURL = 'https://api.twitch.tv/helix/games?name=' + gameName;
+    axios.get(gameURL, { headers: { 'Client-ID': 'n6tkzhwjlttoho9gnpid51z840eiv3' } })
+        .then(res => {
+            console.log(res.data);
+            const gameID = res.data.data[0].id;
+            const topGameStreamsURL = 'https://api.twitch.tv/helix/streams?first=' + num + '&game_id=' + gameID;
+            axios.get(topGameStreamsURL, { headers: { 'Client-ID': 'n6tkzhwjlttoho9gnpid51z840eiv3' } })
+                .then(res => console.log(res.data))
+                .catch(err => console.log(err));
+        })
         .catch(err => console.log(err));
 }
 
@@ -28,9 +35,10 @@ function getStreamInfo(userLogin) {
         .catch(err => console.log(err));
 }
 
-getTopGameStreams(33214);
+getTopGameStreams('fortnite');
+
+getStreamInfo('Ninja');
 /*
-getStreamInfo('ninja');
 getTopStreams(3);
 getTopGames(1);
 */
