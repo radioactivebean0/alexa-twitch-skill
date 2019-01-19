@@ -1,7 +1,7 @@
 /* eslint-disable  func-names */
 /* eslint-disable  no-console */
 
-const Alexa = require('alexa-sdk');
+const Alexa = require('ask-sdk');
 
 const GetTwitchStreamHandler = {
   canHandle(handlerInput) {
