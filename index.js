@@ -14,7 +14,6 @@ var data = {};
 function callback(error, response, body) {
     if (!error && response.statusCode == 200) {
         data = JSON.parse(body).data[0];
-        console.log(data.title);
     }
 }
 
