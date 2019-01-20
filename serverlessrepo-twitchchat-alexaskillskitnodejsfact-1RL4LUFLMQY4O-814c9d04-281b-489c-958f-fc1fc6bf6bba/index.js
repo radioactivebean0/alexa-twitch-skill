@@ -16,7 +16,13 @@ const GetTwitchStreamHandler = {
     let name = handlerInput.requestEnvelope.request.intent.slots.streamers.value;
     try {
       const streamInfo = await getStreamInfo(name);
-
+      if(streamInfo.data[0]== undefined){
+        let notLive = name + " is not live.";
+        return handlerInput.responseBuilder
+          .speak(notLive)
+          .withSimpleCard(name, "not live")
+          .getResponse();
+      }
       let streamname = streamInfo.data[0].title;
       let viewers = streamInfo.data[0].viewer_count;
       let speechOutput = "" + name + "'s stream titled: " +
@@ -47,7 +53,8 @@ const GetTopStreamsHandler = {
         const topFive = await getTopStreams();
         let speechOutput = "Here are the top five live streamers in order: ";
         for(let i=0; i<5; i++){
-          speechOutput += topFive[i];
+          if(topFive[i]==undefined) break;
+          speechOutput += topFive[i].name;
           speechOutput += ", ";
         }
         return handlerInput.responseBuilder
@@ -72,7 +79,8 @@ const GetTopGamesHandler = {
         const topFive = await getTopGames();
         let speechOutput = "Here are the top five games in order: ";
         for(let i=0; i<5; i++){
-          speechOutput += topFive[i];
+          if(topFive[i]==undefined) break;
+          speechOutput += topFive[i].name;
           speechOutput += ", ";
         }
         return handlerInput.responseBuilder
@@ -94,9 +102,10 @@ const GetTopGameStreamsHandler = {
   },
   async handle(handlerInput) {
       try{
-        const topFive = await getTopGamesStreams(handlerInput.requestEnvelope.request.intent.slots.games.value);
+        const topFive = await getTopGameStreams(handlerInput.requestEnvelope.request.intent.slots.games.value);
         let speechOutput = "Here are the top five streamers for "+ handlerInput.requestEnvelope.request.intent.slots.games.value+ " in order: ";
         for(let i=0; i<5; i++){
+          if(topFive[i]==undefined) break;
           speechOutput += topFive[i];
           speechOutput += ", ";
         }
