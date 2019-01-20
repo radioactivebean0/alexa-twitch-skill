@@ -7,23 +7,12 @@ var axios = require('axios');
 const GetTwitchStreamHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
-    return request.type === 'LaunchRequest'
-      || (request.type === 'IntentRequest'
+    return (request.type === 'IntentRequest'
         && request.intent.name === 'twitchchat');
   },
   async handle(handlerInput) {
-    /*if(handlerInput.requestEnvelope.request.intent.slots.streamers.value==null){
-      const speechOutput = "I can tell you info about the top ten streams. Here are the top ten live streamers in order:";
-      getData(null);
-      const topTen  = getTopTen();
-      for(var i=0; i<10; i++){
-        speechOutput = speechOutput +"," + topTen[i];
-      }
-      return handlerInput.responseBuilder
-        .speak(speechOutput)
-        .getResponse();
-    }
-    */
+
+    
     let name = handlerInput.requestEnvelope.request.intent.slots.streamers.value;
     try {
       const streamInfo = await getStreamInfo(name);
@@ -46,12 +35,86 @@ const GetTwitchStreamHandler = {
 
   },
 };
+const GetTopStreamsHandler = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return (request.type === 'IntentRequest'
+        && request.intent.name === 'topStreamers');
+  },
+  async handle(handlerInput) {
 
+      try{
+        const topFive = await getTopStreams();
+        let speechOutput = "Here are the top five live streamers in order: ";
+        for(let i=0; i<5; i++){
+          speechOutput += topFive[i];
+          speechOutput += ", ";
+        }
+        return handlerInput.responseBuilder
+          .speak(speechOutput)
+          .getResponse();
+      }
+      catch (error){
+        console.log(err);
+      }
+    
+  },
+};
+const GetTopGamesHandler = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'LaunchRequest'
+      || (request.type === 'IntentRequest'
+        && request.intent.name === 'topGames');
+  },
+  async handle(handlerInput) {
+      try{
+        const topFive = await getTopGames();
+        let speechOutput = "Here are the top five games in order: ";
+        for(let i=0; i<5; i++){
+          speechOutput += topFive[i];
+          speechOutput += ", ";
+        }
+        return handlerInput.responseBuilder
+          .speak(speechOutput)
+          .getResponse();
+      }
+      catch (error){
+        console.log(err);
+      }
+    
+  },
+};
+const GetTopGameStreamsHandler = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'LaunchRequest'
+      || (request.type === 'IntentRequest'
+        && request.intent.name === 'topGameStreams');
+  },
+  async handle(handlerInput) {
+      try{
+        const topFive = await getTopGamesStreams(handlerInput.requestEnvelope.request.intent.slots.games.value);
+        let speechOutput = "Here are the top five streamers for "+ handlerInput.requestEnvelope.request.intent.slots.games.value+ " in order: ";
+        for(let i=0; i<5; i++){
+          speechOutput += topFive[i];
+          speechOutput += ", ";
+        }
+        return handlerInput.responseBuilder
+          .speak(speechOutput)
+          .getResponse();
+      }
+      catch (error){
+        console.log(err);
+      }
+    
+  },
+};
 const HelpHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
-    return request.type === 'IntentRequest'
-      && request.intent.name === 'AMAZON.HelpIntent';
+    return request.type == 'LaunchRequest' || (request.type === 'IntentRequest'
+      && request.intent.name === 'AMAZON.HelpIntent');
   },
   handle(handlerInput) {
     return handlerInput.responseBuilder
@@ -102,8 +165,8 @@ const ErrorHandler = {
 };
 
 /// TO DO
-const HELP_MESSAGE = 'You can ask me about twitch streams, or a particular stream, or to exit... What can I help you with?';
-const HELP_REPROMPT = 'You can ask me about twitch streams, or a particular stream, or to exit... What can I help you with?';
+const HELP_MESSAGE = 'You can ask me about popular twitch streams, or a particular stream, the most popular streamers for a particular game, or the most popular games, or to exit... What can I help you with?';
+const HELP_REPROMPT = 'You can ask me about popular twitch streams, or a particular stream, the most popular streamers for a particular game, or the most popular games, or to exit... What can I help you with?';
 const STOP_MESSAGE = 'C. Y. at';
 
 
@@ -115,7 +178,10 @@ exports.handler = skillBuilder
     GetTwitchStreamHandler,
     HelpHandler,
     ExitHandler,
-    SessionEndedRequestHandler
+    SessionEndedRequestHandler,
+    GetTopStreamsHandler,
+    GetTopGamesHandler,
+    GetTopGameStreamsHandler
   )
   .addErrorHandlers(ErrorHandler)
   .lambda();
