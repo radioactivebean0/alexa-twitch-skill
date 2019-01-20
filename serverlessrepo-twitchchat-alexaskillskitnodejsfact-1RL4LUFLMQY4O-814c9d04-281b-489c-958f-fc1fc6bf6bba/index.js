@@ -10,7 +10,7 @@ const GetTwitchStreamHandler = {
       || (request.type === 'IntentRequest'
         && request.intent.name === 'twitchchat');
   },
-  handle(handlerInput) {
+  async handle(handlerInput) {
     /*if(handlerInput.requestEnvelope.request.intent.slots.streamers.value==null){
       const speechOutput = "I can tell you info about the top ten streams. Here are the top ten live streamers in order:";
       getData(null);
@@ -24,10 +24,11 @@ const GetTwitchStreamHandler = {
     }
     */
     let name = handlerInput.requestEnvelope.request.intent.slots.streamers.value;
+    try {
+      const streamInfo = await getStreamInfo(name);
 
-    getStreamInfo(name).then(res => {
-      let streamname = res.data[0].title;
-      let viewers = res.data[0].viewer_count;
+      let streamname = streamInfo.data[0].title;
+      let viewers = streamInfo.data[0].viewer_count;
       const speechOutput = name + "'s stream titled:"
       streamname + "has" + viewers + "viewers.";
 
@@ -36,7 +37,10 @@ const GetTwitchStreamHandler = {
         .withSimpleCard(streamname, viewers)
         .getResponse();
 
-    }).catch(err => console.log(err));
+
+    } catch (error) {
+      console.log(err);
+    }
 
 
   },
