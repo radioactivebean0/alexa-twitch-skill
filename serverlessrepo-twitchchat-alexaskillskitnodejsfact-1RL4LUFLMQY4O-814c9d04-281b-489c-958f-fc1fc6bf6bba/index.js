@@ -1,7 +1,16 @@
 /* eslint-disable  func-names */
 /* eslint-disable  no-console */
 
-const Alexa = require('alexa-sdk');
+const Alexa = require('ask-sdk');
+var axios = require('axios');
+function getTopStreams(num = 5) {
+    const topStreamsURL = 'https://api.twitch.tv/helix/streams?first=' + num;
+    return new Promise(function (resolve, reject) {
+        axios.get(topStreamsURL, { headers: { 'Client-ID': 'n6tkzhwjlttoho9gnpid51z840eiv3' } })
+            .then(res => resolve(res.data))
+            .catch(err => console.log(err));
+    });
+}
 
 const GetTwitchStreamHandler = {
   canHandle(handlerInput) {
@@ -11,7 +20,7 @@ const GetTwitchStreamHandler = {
         && request.intent.name === 'twitchchat');
   },
   handle(handlerInput) {
-    if(this.event.request.intent.slots.streamers.value==null){
+    /*if(handlerInput.requestEnvelope.request.intent.slots.streamers.value==null){
       const speechOutput = "I can tell you info about the top ten streams. Here are the top ten live streamers in order:";
       getData(null);
       const topTen  = getTopTen();
@@ -22,19 +31,24 @@ const GetTwitchStreamHandler = {
         .speak(speechOutput)
         .getResponse();
     }
-      
-    getData(this.event.request.intent.slots.streamers.value);
-    let streamname = getStreamName();
-    let viewers = getViewers();
+    */
+    let name = handlerInput.requestEnvelope.request.intent.slots.streamers.value;
     
-    const speechOutput = this.event.request.intent.slots.streamers.value +"'s stream titled:"
+    getStreamInfo(name).then(res => {
+		let streamname = res.data[0].title;
+		let viewers = res.data[0].viewer_count;
+		const speechOutput = name +"'s stream titled:"
                   streamname +"has" +viewers +"viewers.";
     
-    return handlerInput.responseBuilder
-      .speak(speechOutput)
-      .withSimpleCard(streamname, viewers)
-      .getResponse();
-  },
+    		return handlerInput.responseBuilder
+      		.speak(speechOutput)
+     		.withSimpleCard(streamname, viewers)
+      		.getResponse();
+
+	}).catch(err => console.log(err));
+
+    	
+      },
 };
 
 const HelpHandler = {
@@ -110,42 +124,44 @@ exports.handler = skillBuilder
   .addErrorHandlers(ErrorHandler)
   .lambda();
 
-let stream_name;
-let viewers;
-let datastring;
-function getData(name){
-  if(name==null){
-    
-  }
-  
-  var request = require('request');
 
-  var headers = {
-     'Client-ID': '76cpa8o345vq4w52p2d5'
-  };
+function getTopGameStreams(gameName, num = 5) {
+    const gameURL = 'https://api.twitch.tv/helix/games?name=' + gameName;
+    return new Promise(function (resolve, reject) {
+        axios.get(gameURL, { headers: { 'Client-ID': 'n6tkzhwjlttoho9gnpid51z840eiv3' } })
+            .then(res => {
+                const gameID = res.data.data[0].id;
+                const topGameStreamsURL = 'https://api.twitch.tv/helix/streams?first=' + num + '&game_id=' + gameID;
+                axios.get(topGameStreamsURL, { headers: { 'Client-ID': 'n6tkzhwjlttoho9gnpid51z840eiv3' } })
+                    .then(res => resolve(res.data))
+                    .catch(err => console.log(err));
+            })
+            .catch(err => console.log(err));
+    });
+}
 
-  var options = {
-     url: 'https://api.twitch.tv/helix/streams?user_login='+name,
-     headers: headers
-  };
-  var body;
-  function callback(error, response, body) {
-    if (!error && response.statusCode == 200) {
-        console.log(body);
-    }
-  }
+function getTopGames(num = 5) {
+    const topGamesURL = 'https://api.twitch.tv/helix/games/top?first=' + num;
+    return new Promise(function (resolve, reject) {
+        axios.get(topGamesURL, { headers: { 'Client-ID': 'n6tkzhwjlttoho9gnpid51z840eiv3' } })
+            .then(res => resolve(res.data))
+            .catch(err => console.log(err));
+    });
+}
 
-  request(options, callback);
-  body = request;
 
+function getStreamInfo(userLogin) {
+    const streamURL = 'https://api.twitch.tv/helix/streams?user_login=' + userLogin;
+    return new Promise(function (resolve, reject) {
+        axios.get(streamURL, { headers: { 'Client-ID': 'n6tkzhwjlttoho9gnpid51z840eiv3' } })
+            .then(res => {
+                resolve(res.data);
+            })
+            .catch(err => console.log(err));
+    });
 }
-function getTopTen(){
-  return;
-}
-function getStreamName(){
-  
-  return datastring.data.title;
-}
-function getViewers(){
-  return datastring.data.viewer_count;
-}
+
+// getTopGameStreams('fortnite', 3).then(res => console.log(res)).catch(err => console.log(err));
+// getStreamInfo('Ninja').then(res => console.log(res)).catch(err => console.log(err));
+// getTopStreams(3).then(res => console.log(res)).catch(err => console.log(err));
+// getTopGames(3).then(res => console.log(res)).catch(err => console.log(err));
