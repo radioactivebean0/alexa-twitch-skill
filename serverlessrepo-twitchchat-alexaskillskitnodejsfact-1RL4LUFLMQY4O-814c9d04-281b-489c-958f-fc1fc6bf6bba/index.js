@@ -2,6 +2,7 @@
 /* eslint-disable  no-console */
 
 const Alexa = require('ask-sdk');
+<<<<<<< HEAD
 var axios = require('axios');
 function getTopStreams(num = 5) {
     const topStreamsURL = 'https://api.twitch.tv/helix/streams?first=' + num;
@@ -11,6 +12,8 @@ function getTopStreams(num = 5) {
             .catch(err => console.log(err));
     });
 }
+=======
+>>>>>>> a30d5e77321cd9d48304114fc30a48d4f8b792e2
 
 const GetTwitchStreamHandler = {
   canHandle(handlerInput) {
@@ -124,6 +127,36 @@ exports.handler = skillBuilder
   .addErrorHandlers(ErrorHandler)
   .lambda();
 
+<<<<<<< HEAD
+=======
+var data;
+function getData(name){
+  if(name==null){
+    
+  }
+  
+  var request = require('request');
+
+var headers = {
+    'Client-ID': '76cpa8o345vq4w52p2s4utyzoxsfd5'
+};
+
+var options = {
+    url: 'https://api.twitch.tv/helix/streams?user_login='+name,
+    headers: headers
+};
+
+ data = {};
+
+function callback(error, response, body) {
+    if (!error && response.statusCode == 200) {
+        var tempData = JSON.stringify(JSON.parse(body).data);
+        data = JSON.parse(tempData.substring(1, tempData.length-1));
+    }
+}
+
+request(options, callback);
+>>>>>>> a30d5e77321cd9d48304114fc30a48d4f8b792e2
 
 function getTopGameStreams(gameName, num = 5) {
     const gameURL = 'https://api.twitch.tv/helix/games?name=' + gameName;
@@ -148,6 +181,7 @@ function getTopGames(num = 5) {
             .catch(err => console.log(err));
     });
 }
+<<<<<<< HEAD
 
 
 function getStreamInfo(userLogin) {
@@ -165,3 +199,12 @@ function getStreamInfo(userLogin) {
 // getStreamInfo('Ninja').then(res => console.log(res)).catch(err => console.log(err));
 // getTopStreams(3).then(res => console.log(res)).catch(err => console.log(err));
 // getTopGames(3).then(res => console.log(res)).catch(err => console.log(err));
+=======
+function getStreamName(){
+  
+  return data.title;
+}
+function getViewers(){
+  return data.viewer_count;
+}
+>>>>>>> a30d5e77321cd9d48304114fc30a48d4f8b792e2
