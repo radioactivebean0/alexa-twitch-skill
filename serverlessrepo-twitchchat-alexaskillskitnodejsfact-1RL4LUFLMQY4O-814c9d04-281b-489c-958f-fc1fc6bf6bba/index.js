@@ -30,12 +30,12 @@ const GetTwitchStreamHandler = {
 
       let streamname = streamInfo.data[0].title;
       let viewers = streamInfo.data[0].viewer_count;
-      const speechOutput = name + "'s stream titled:"
-      streamname + "has" + viewers + "viewers.";
+      let speechOutput = "" + name + "'s stream titled: " +
+      streamname + " has " + viewers + " viewers.";
 
       return handlerInput.responseBuilder
         .speak(speechOutput)
-        .withSimpleCard(streamname, viewers)
+        .withSimpleCard(streamname, "viewers:"+viewers)
         .getResponse();
 
 
