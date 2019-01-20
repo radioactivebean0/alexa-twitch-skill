@@ -23,6 +23,7 @@ const GetTwitchStreamHandler = {
           .withSimpleCard(name, "not live")
           .getResponse();
       }
+      
       let streamname = streamInfo.data[0].title;
       let viewers = streamInfo.data[0].viewer_count;
       let speechOutput = "" + name + "'s stream titled: " +
@@ -53,8 +54,8 @@ const GetTopStreamsHandler = {
         const topFive = await getTopStreams();
         let speechOutput = "Here are the top five live streamers in order: ";
         for(let i=0; i<5; i++){
-          if(topFive[i]==undefined) break;
-          speechOutput += topFive[i].name;
+          if(topFive.data[i]==undefined) break;
+          speechOutput += topFive.data[i].name;
           speechOutput += ", ";
         }
         return handlerInput.responseBuilder
@@ -79,8 +80,8 @@ const GetTopGamesHandler = {
         const topFive = await getTopGames();
         let speechOutput = "Here are the top five games in order: ";
         for(let i=0; i<5; i++){
-          if(topFive[i]==undefined) break;
-          speechOutput += topFive[i].name;
+          if(topFive.data[i]==undefined) break;
+          speechOutput += topFive.data[i].name;
           speechOutput += ", ";
         }
         return handlerInput.responseBuilder
@@ -105,8 +106,8 @@ const GetTopGameStreamsHandler = {
         const topFive = await getTopGameStreams(handlerInput.requestEnvelope.request.intent.slots.games.value);
         let speechOutput = "Here are the top five streamers for "+ handlerInput.requestEnvelope.request.intent.slots.games.value+ " in order: ";
         for(let i=0; i<5; i++){
-          if(topFive[i]==undefined) break;
-          speechOutput += topFive[i];
+          if(topFive.data[i]==undefined) break;
+          speechOutput += topFive.data[i];
           speechOutput += ", ";
         }
         return handlerInput.responseBuilder
