@@ -55,7 +55,7 @@ const GetTopStreamsHandler = {
         let speechOutput = "Here are the top five live streamers in order: ";
         for(let i=0; i<5; i++){
           if(topFive.data[i]==undefined) break;
-          speechOutput += topFive.data[i].name;
+          speechOutput += topFive.data[i].user_name;
           speechOutput += ", ";
         }
         return handlerInput.responseBuilder
@@ -107,7 +107,7 @@ const GetTopGameStreamsHandler = {
         let speechOutput = "Here are the top five streamers for "+ handlerInput.requestEnvelope.request.intent.slots.games.value+ " in order: ";
         for(let i=0; i<5; i++){
           if(topFive.data[i]==undefined) break;
-          speechOutput += topFive.data[i];
+          speechOutput += topFive.data[i].user_name;
           speechOutput += ", ";
         }
         return handlerInput.responseBuilder
