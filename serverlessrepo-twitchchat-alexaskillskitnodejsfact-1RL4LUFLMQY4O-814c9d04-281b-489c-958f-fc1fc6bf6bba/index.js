@@ -2,6 +2,7 @@
 /* eslint-disable  no-console */
 
 const Alexa = require('ask-sdk');
+var axios = require('axios');
 
 const GetTwitchStreamHandler = {
   canHandle(handlerInput) {
