@@ -10,4 +10,5 @@ This is an skill for the Amazon Alexa which uses a JavaScript server to handle r
 
 
 Blog Post: http://whatdidilearn.info/2018/09/23/how-to-call-external-apis-from-alexa-skill.html
+
 Devpost: https://devpost.com/software/twitch-info-alexa-skill
